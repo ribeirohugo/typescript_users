@@ -3,7 +3,13 @@ import { LayoutDashboard, KeyRound, Users, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 
-type NavItem = { to: string; icon: React.ElementType; label: string; end: boolean; adminOnly: boolean };
+type NavItem = {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  end: boolean;
+  adminOnly: boolean;
+};
 
 const navItems: NavItem[] = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true, adminOnly: false },

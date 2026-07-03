@@ -15,7 +15,11 @@
     "start:prod": "node dist/main",
     "prisma:generate": "prisma generate --config prisma/prisma.config.ts",
     "prisma:migrate:dev": "prisma migrate dev --config prisma/prisma.config.ts",
-    "prisma:migrate:deploy": "prisma migrate deploy --config prisma/prisma.config.ts"
+    "prisma:migrate:deploy": "prisma migrate deploy --config prisma/prisma.config.ts",
+    "lint:check": "eslint \"{src,test}/**/*.ts\"",
+    "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
+    "format:check": "prettier --check \"{src,test}/**/*.ts\"",
+    "format:fix": "prettier --write \"{src,test}/**/*.ts\""
   },
   "dependencies": {
     "@nestjs/common": "^11.1.24",
@@ -39,6 +43,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@nestjs/cli": "^11.0.21",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
@@ -46,7 +51,11 @@
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
     "@types/pg": "^8.20.0",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.62.1"
   }
 }
