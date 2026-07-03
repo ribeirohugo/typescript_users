@@ -1,0 +1,15 @@
+{
+  "name": "typescript_users",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "docker:dev": "docker compose -f docker/typescript_users_dev/docker-compose.yml up --build",
+    "format:check": "npm run format:check --prefix backend && npm run format:check --prefix frontend",
+    "format:fix": "npm run format:fix --prefix backend && npm run format:fix --prefix frontend",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "husky": "^9.1.7"
+  }
+}

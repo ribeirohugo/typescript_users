@@ -1,0 +1,6 @@
+npm --prefix frontend run format:check
+npm --prefix frontend run lint:check
+npm --prefix frontend run build
+npm --prefix backend run format:check
+npm --prefix backend run lint:check
+npm --prefix backend run build
