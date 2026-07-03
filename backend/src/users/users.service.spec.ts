@@ -62,6 +62,16 @@ describe('UsersService', () => {
       expect(await bcrypt.compare('secret123', createArgs.data.password)).toBe(true);
       expect(result).not.toHaveProperty('password');
     });
+
+    it('normalizes the email to lowercase before checking for conflicts and creating', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+      prisma.user.create.mockResolvedValue(baseUser);
+
+      await usersService.create({ email: 'Jane@Example.COM', password: 'secret123' });
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: 'jane@example.com' } });
+      expect(prisma.user.create.mock.calls[0][0].data.email).toBe('jane@example.com');
+    });
   });
 
   describe('findAll', () => {
@@ -125,6 +135,18 @@ describe('UsersService', () => {
         data: { name: 'New Name' },
       });
       expect(result).not.toHaveProperty('password');
+    });
+
+    it('normalizes the email to lowercase when one is provided', async () => {
+      prisma.user.findUnique.mockResolvedValue(baseUser);
+      prisma.user.update.mockResolvedValue(baseUser);
+
+      await usersService.update(baseUser.id, { email: 'Jane@Example.COM' });
+
+      expect(prisma.user.update).toHaveBeenCalledWith({
+        where: { id: baseUser.id },
+        data: { email: 'jane@example.com' },
+      });
     });
   });
 

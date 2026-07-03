@@ -1,5 +1,6 @@
 import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { normalizeEmail } from '../common/normalize-email';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from '@prisma/client';
@@ -12,12 +13,13 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    const email = normalizeEmail(dto.email);
+    const existing = await this.prisma.user.findUnique({ where: { email } });
     if (existing) throw new ConflictException('Email already in use');
 
     const hashed = await bcrypt.hash(dto.password, SALT_ROUNDS);
     const user = await this.prisma.user.create({
-      data: { ...dto, password: hashed },
+      data: { ...dto, email, password: hashed },
     });
 
     return this.exclude(user);
@@ -40,6 +42,9 @@ export class UsersService {
     await this.findOne(id);
 
     const data: Partial<User> = { ...dto };
+    if (dto.email) {
+      data.email = normalizeEmail(dto.email);
+    }
     if (dto.password) {
       data.password = await bcrypt.hash(dto.password, SALT_ROUNDS);
     }

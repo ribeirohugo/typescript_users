@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import * as bcrypt from 'bcrypt';
+import { normalizeEmail } from '../src/common/normalize-email';
 
 const SALT_ROUNDS = 10;
 
@@ -16,8 +17,8 @@ async function main() {
   const pool = new Pool({ connectionString });
   const prisma = new PrismaClient({ adapter: new PrismaPg(pool) });
 
-  const email = process.env.SUPER_ADMIN_EMAIL ?? 'admin@example.com';
-  const password = process.env.SUPER_ADMIN_PASSWORD ?? 'ChangeMe123!';
+  const email = normalizeEmail(process.env.SUPER_ADMIN_EMAIL ?? 'admin@example.com');
+  const password = process.env.SUPER_ADMIN_PASSWORD ?? 'Password123!';
   const hashed = await bcrypt.hash(password, SALT_ROUNDS);
 
   const admin = await prisma.user.upsert({
