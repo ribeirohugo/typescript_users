@@ -13,6 +13,7 @@ import { User } from '@prisma/client';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -44,5 +45,11 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   updateProfile(@Request() req: { user: Omit<User, 'password'> }, @Body() dto: UpdateProfileDto) {
     return this.authService.updateProfile(req.user.id, dto);
+  }
+
+  @Patch('profile/password')
+  @UseGuards(JwtAuthGuard)
+  changePassword(@Request() req: { user: Omit<User, 'password'> }, @Body() dto: ChangePasswordDto) {
+    return this.authService.changePassword(req.user.id, dto);
   }
 }

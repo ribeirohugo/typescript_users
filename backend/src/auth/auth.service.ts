@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
@@ -64,26 +65,19 @@ export class AuthService {
 
     if (dto.name !== undefined) data.name = dto.name;
 
-    if (dto.email) {
-      const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
-      if (existing && existing.id !== id) throw new ConflictException('Email already in use');
-      data.email = dto.email;
-    }
-
-    if (dto.password) {
-      if (!dto.currentPassword)
-        throw new BadRequestException('Current password is required to set a new password');
-
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) throw new NotFoundException('User not found');
-
-      const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
-      if (!isMatch) throw new BadRequestException('Current password is incorrect');
-
-      data.password = await bcrypt.hash(dto.password, SALT_ROUNDS);
-    }
-
     const updated = await this.prisma.user.update({ where: { id }, data });
+    return this.exclude(updated);
+  }
+
+  async changePassword(id: string, dto: ChangePasswordDto): Promise<Omit<User, 'password'>> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const isMatch = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isMatch) throw new BadRequestException('Current password is incorrect');
+
+    const password = await bcrypt.hash(dto.newPassword, SALT_ROUNDS);
+    const updated = await this.prisma.user.update({ where: { id }, data: { password } });
     return this.exclude(updated);
   }
 

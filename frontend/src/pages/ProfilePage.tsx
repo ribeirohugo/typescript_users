@@ -45,49 +45,61 @@ export function ProfilePage() {
   const { user, refreshUser } = useAuth();
 
   const [name, setName] = useState(user?.name ?? '');
-  const [email, setEmail] = useState(user?.email ?? '');
-  const [password, setPassword] = useState('');
-  const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
+  const [profileSaved, setProfileSaved] = useState(false);
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: () =>
-      authApi.updateProfile({
-        name: name.trim() || undefined,
-        email: email.trim() || undefined,
-        password: password || undefined,
-        currentPassword: currentPassword || undefined,
-      }),
+  const {
+    mutate: mutateProfile,
+    isPending: isProfilePending,
+    error: profileError,
+  } = useMutation({
+    mutationFn: () => authApi.updateProfile({ name: name.trim() || undefined }),
     onSuccess: async () => {
       await refreshUser();
-      setPassword('');
-      setPasswordConfirm('');
-      setCurrentPassword('');
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      setProfileSaved(true);
+      setTimeout(() => setProfileSaved(false), 3000);
     },
   });
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleProfileSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    mutateProfile();
+  }
+
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const {
+    mutate: mutatePassword,
+    isPending: isPasswordPending,
+    error: passwordError,
+  } = useMutation({
+    mutationFn: () => authApi.changePassword({ currentPassword, newPassword: password }),
+    onSuccess: () => {
+      setPassword('');
+      setPasswordConfirm('');
+      setCurrentPassword('');
+      setPasswordSaved(true);
+      setTimeout(() => setPasswordSaved(false), 3000);
+    },
+  });
+
+  function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     setValidationError(null);
 
-    if (password && !currentPassword) {
-      setValidationError('Current password is required to set a new password');
-      return;
-    }
-    if (password && password.length < 8) {
+    if (password.length < 8) {
       setValidationError('New password must be at least 8 characters');
       return;
     }
-    if (password && password !== passwordConfirm) {
+    if (password !== passwordConfirm) {
       setValidationError('Passwords do not match');
       return;
     }
 
-    mutate();
+    mutatePassword();
   }
 
   if (!user) return null;
@@ -115,7 +127,7 @@ export function ProfilePage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleProfileSubmit} className="space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
             <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
               Personal info
@@ -131,23 +143,33 @@ export function ProfilePage() {
               />
             </Field>
 
-            <Field label="Email">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className={inputCls}
-              />
+            <Field label="Email" hint="Email cannot be changed">
+              <input type="email" value={user.email} disabled className={inputCls} />
             </Field>
           </div>
 
+          {profileError && <p className="text-sm text-red-400">{profileError.message}</p>}
+
+          <div className="flex items-center gap-3">
+            <Button type="submit" loading={isProfilePending}>
+              Save changes
+            </Button>
+            {profileSaved && (
+              <span className="flex items-center gap-1.5 text-sm text-emerald-400">
+                <CheckCircle2 className="w-4 h-4" />
+                Saved
+              </span>
+            )}
+          </div>
+        </form>
+
+        <form onSubmit={handlePasswordSubmit} className="space-y-6">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
             <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
               Security
             </h2>
 
-            <Field label="Current password" hint="Required only when changing your password">
+            <Field label="Current password">
               <input
                 type="password"
                 value={currentPassword}
@@ -157,7 +179,7 @@ export function ProfilePage() {
               />
             </Field>
 
-            <Field label="New password" hint="Leave blank to keep your current password">
+            <Field label="New password">
               <input
                 type="password"
                 value={password}
@@ -178,17 +200,17 @@ export function ProfilePage() {
             </Field>
           </div>
 
-          {(validationError ?? error) && (
+          {(validationError ?? passwordError) && (
             <p className="text-sm text-red-400">
-              {validationError ?? error?.message ?? 'Something went wrong'}
+              {validationError ?? passwordError?.message ?? 'Something went wrong'}
             </p>
           )}
 
           <div className="flex items-center gap-3">
-            <Button type="submit" loading={isPending}>
-              Save changes
+            <Button type="submit" loading={isPasswordPending}>
+              Change password
             </Button>
-            {saved && (
+            {passwordSaved && (
               <span className="flex items-center gap-1.5 text-sm text-emerald-400">
                 <CheckCircle2 className="w-4 h-4" />
                 Saved

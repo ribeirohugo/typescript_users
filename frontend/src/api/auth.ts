@@ -17,13 +17,13 @@ export const authApi = {
     return data;
   },
 
-  updateProfile: async (body: {
-    name?: string;
-    email?: string;
-    password?: string;
-    currentPassword?: string;
-  }): Promise<User> => {
+  updateProfile: async (body: { name?: string }): Promise<User> => {
     const { data } = await apiClient.patch('/auth/profile', body);
+    return data;
+  },
+
+  changePassword: async (body: { currentPassword: string; newPassword: string }): Promise<User> => {
+    const { data } = await apiClient.patch('/auth/profile/password', body);
     return data;
   },
 };
