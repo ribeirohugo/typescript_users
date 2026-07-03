@@ -9,12 +9,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthLayout } from '@/components/auth/AuthLayout';
 import { FormField, Input } from '@/components/auth/FormField';
 import { Button } from '@/components/ui/Button';
+import { passwordSchema, PASSWORD_HINT } from '@/lib/password';
 
 const schema = z
   .object({
     name: z.string().optional(),
     email: z.string().email('Enter a valid email'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((d) => d.password === d.confirmPassword, {
@@ -91,7 +92,7 @@ export function RegisterPage() {
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
-              placeholder="Min. 8 characters"
+              placeholder={PASSWORD_HINT}
               hasError={!!errors.password}
               autoComplete="new-password"
               className="pr-10"

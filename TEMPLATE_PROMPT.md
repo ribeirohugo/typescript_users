@@ -65,6 +65,14 @@ premature shared-package abstraction.
 - **Passwords**: `bcrypt`, `SALT_ROUNDS = 10`, hashed at the service layer, never in DTOs/
   controllers. Never return the `password` field — every service has a private
   `exclude(user)` helper doing `const { password: _, ...rest } = user; return rest;`.
+- **Password strength**: every DTO that accepts a new password (register, admin create/update
+  user, change-password) uses the shared `IsStrongPassword()` decorator
+  (`backend/src/common/is-strong-password.decorator.ts`, wraps class-validator's built-in
+  `IsStrongPassword` with fixed options: min 8 chars, 1 lowercase, 1 uppercase, 1 number, 1
+  symbol) instead of a bare `@MinLength(8)`. The frontend mirrors the exact same rule via a
+  shared `passwordSchema`/`getPasswordError`/`PASSWORD_HINT` in `frontend/src/lib/password.ts`,
+  used by every form with a password field (register, admin create/edit user, change-password) —
+  don't duplicate the regex/rules inline in a form's zod schema.
 - **Soft delete over hard delete**: "deleting" a resource sets `isActive: false`, it does not
   remove the row. Inactive users are treated as not-found by lookups that gate on it.
 - **Immutable fields called out explicitly**: if a field must never change via an update
@@ -174,7 +182,10 @@ Add, per the domain description above:
 - The lint/format/test tool choices and their configuration shape.
 - The pre-commit hook running the full format+lint+test+build pipeline for both apps.
 - The soft-delete convention, the exclude-password convention, the DTO-whitelist validation
-  convention, the separate change-password endpoint convention.
+  convention, the separate change-password endpoint convention, the shared password-strength
+  policy (backend + frontend) and case-insensitive email normalization (via a shared
+  `normalizeEmail()` helper applied wherever an email is written or looked up, including inside
+  the login strategy — not just in DTO transforms).
 - Dependency major versions, unless a security advisory or the user requires bumping them — if
   a transitive dependency has a vulnerability with no non-breaking upstream fix, prefer an
   `overrides` pin to the patched version over downgrading direct dependencies.

@@ -4,6 +4,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { authApi } from '@/api/auth';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
+import { getPasswordError, PASSWORD_HINT } from '@/lib/password';
 
 const inputCls =
   'w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50';
@@ -90,8 +91,9 @@ export function ProfilePage() {
     e.preventDefault();
     setValidationError(null);
 
-    if (password.length < 8) {
-      setValidationError('New password must be at least 8 characters');
+    const strengthError = getPasswordError(password);
+    if (strengthError) {
+      setValidationError(strengthError);
       return;
     }
     if (password !== passwordConfirm) {
@@ -184,7 +186,7 @@ export function ProfilePage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 8 characters"
+                placeholder={PASSWORD_HINT}
                 className={inputCls}
               />
             </Field>

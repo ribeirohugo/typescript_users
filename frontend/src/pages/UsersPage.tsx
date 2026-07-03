@@ -9,21 +9,18 @@ import type { User } from '@/types';
 import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { cn } from '@/lib/utils';
+import { passwordSchema, PASSWORD_HINT } from '@/lib/password';
 
 const createSchema = z.object({
   email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   name: z.string().optional(),
   role: z.enum(['USER', 'ADMIN']),
 });
 
 const editSchema = z.object({
   email: z.string().email('Invalid email').optional().or(z.literal('')),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .optional()
-    .or(z.literal('')),
+  password: passwordSchema.optional().or(z.literal('')),
   name: z.string().optional(),
   role: z.enum(['USER', 'ADMIN']),
   isActive: z.boolean(),
@@ -130,7 +127,7 @@ function CreateUserModal({ onClose }: { onClose: () => void }) {
             <input
               {...register('password')}
               type="password"
-              placeholder="Min. 8 characters"
+              placeholder={PASSWORD_HINT}
               className={inputCls}
             />
           </Field>
@@ -221,7 +218,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
             <input
               {...register('password')}
               type="password"
-              placeholder="Min. 8 characters"
+              placeholder={PASSWORD_HINT}
               className={inputCls}
             />
           </Field>
