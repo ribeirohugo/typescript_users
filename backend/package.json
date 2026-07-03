@@ -1,7 +1,7 @@
 {
-  "name": "example-backend",
+  "name": "typescript-users-backend",
   "version": "1.0.0",
-  "description": "Example users + authentication backend, following document-extraction-backend conventions",
+  "description": "TypeScript Users backend: NestJS + Prisma users and authentication API",
   "private": true,
   "license": "UNLICENSED",
   "engines": {

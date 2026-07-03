@@ -50,7 +50,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <KeyRound className="w-4 h-4 text-white" />
           </div>
           <div>
-            <p className="text-slate-100 font-semibold text-sm leading-tight">Auth Example</p>
+            <p className="text-slate-100 font-semibold text-sm leading-tight">TypeScript Users</p>
             <p className="text-slate-500 text-xs">Users &amp; authentication</p>
           </div>
         </NavLink>

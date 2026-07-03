@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosError } from 'axios';
 import type { ApiError } from '@/types';
 
-export const TOKEN_KEY = 'example_token';
+export const TOKEN_KEY = 'typescript_users_token';
 
 export const apiClient = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL ?? ''}/api/v1`,

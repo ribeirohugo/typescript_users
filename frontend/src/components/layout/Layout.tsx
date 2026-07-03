@@ -23,7 +23,7 @@ export function Layout() {
             <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
               <KeyRound className="w-3.5 h-3.5 text-white" />
             </div>
-            <span className="text-slate-100 font-semibold text-sm">Auth Example</span>
+            <span className="text-slate-100 font-semibold text-sm">TypeScript Users</span>
           </div>
           <button
             onClick={() => setSidebarOpen(true)}
