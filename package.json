@@ -6,6 +6,9 @@
     "docker:dev": "docker compose -f docker/typescript_users_dev/docker-compose.yml up --build",
     "format:check": "npm run format:check --prefix backend && npm run format:check --prefix frontend",
     "format:fix": "npm run format:fix --prefix backend && npm run format:fix --prefix frontend",
+    "lint:check": "npm run lint:check --prefix backend && npm run lint:check --prefix frontend",
+    "lint:fix": "npm run lint:fix --prefix backend && npm run lint:fix --prefix frontend",
+    "test": "npm run test --prefix backend && npm run test --prefix frontend",
     "prepare": "husky"
   },
   "devDependencies": {
