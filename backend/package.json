@@ -16,6 +16,7 @@
     "prisma:generate": "prisma generate --config prisma/prisma.config.ts",
     "prisma:migrate:dev": "prisma migrate dev --config prisma/prisma.config.ts",
     "prisma:migrate:deploy": "prisma migrate deploy --config prisma/prisma.config.ts",
+    "seed": "ts-node prisma/seed.ts",
     "lint:check": "eslint \"{src,test}/**/*.ts\"",
     "lint:fix": "eslint \"{src,test}/**/*.ts\" --fix",
     "format:check": "prettier --check \"{src,test}/**/*.ts\"",

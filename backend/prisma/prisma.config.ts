@@ -7,4 +7,7 @@ export default defineConfig({
   datasource: {
     url: process.env.DATABASE_URL ?? 'postgresql://localhost/placeholder',
   },
+  migrations: {
+    seed: 'ts-node prisma/seed.ts',
+  },
 });
