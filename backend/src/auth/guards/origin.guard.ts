@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { parseAllowedOrigins } from './allowed-origins';
+import { parseAllowedOrigins } from '../../common/allowed-origins';
 
 /**
  * Hard-rejects (403) any request whose `Origin` header is present but not in

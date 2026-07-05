@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { parseAllowedOrigins } from './common/allowed-origins';
-import { OriginGuard } from './common/origin.guard';
+import { OriginGuard } from './auth/guards/origin.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
