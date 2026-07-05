@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { parseAllowedOrigins } from './common/allowed-origins';
+import { OriginGuard } from './common/origin.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +23,14 @@ async function bootstrap() {
     }),
   );
 
-  app.enableCors();
+  const allowedOrigins = parseAllowedOrigins(process.env.CORS_ORIGIN);
+
+  app.enableCors({
+    origin: allowedOrigins.length > 0 ? allowedOrigins : false,
+    credentials: true,
+  });
+
+  app.useGlobalGuards(new OriginGuard());
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
